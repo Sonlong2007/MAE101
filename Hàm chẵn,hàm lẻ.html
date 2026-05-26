@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trắc Nghiệm Hàm Chẵn - Hàm Lẻ</title>
+
+<!-- MathJax -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']]
+  }
+};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f7fc;
+    margin:0;
+    padding:20px;
+    line-height:1.6;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    color:#0b5394;
+}
+
+.score-board{
+    position:sticky;
+    top:0;
+    background:#0b5394;
+    color:white;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+    font-size:24px;
+    z-index:999;
+    margin-bottom:25px;
+}
+
+.question{
+    margin-top:25px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:20px;
+    background:#fafafa;
+}
+
+.question h3{
+    margin-top:0;
+}
+
+.level{
+    color:#cc0000;
+    font-weight:bold;
+}
+
+.option{
+    border:1px solid #bbb;
+    border-radius:8px;
+    padding:12px;
+    margin:10px 0;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.option:hover{
+    background:#e8f0ff;
+}
+
+.correct{
+    background:#b7ffb7 !important;
+    border:2px solid green;
+}
+
+.wrong{
+    background:#ffbcbc !important;
+    border:2px solid red;
+}
+
+.explanation{
+    margin-top:15px;
+    padding:15px;
+    background:#eef6ff;
+    border-left:5px solid #0b5394;
+    display:none;
+}
+
+.tip{
+    margin-top:10px;
+    background:#fff6cc;
+    padding:10px;
+    border-left:5px solid orange;
+}
+
+button{
+    margin-top:30px;
+    padding:15px 25px;
+    border:none;
+    border-radius:10px;
+    background:#0b5394;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#073763;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>ĐỀ THI TRẮC NGHIỆM HÀM CHẴN - HÀM LẺ</h1>
+
+<div class="score-board">
+Điểm: <span id="score">0</span> / 20
+</div>
+
+<div id="quiz"></div>
+
+<center>
+<button onclick="location.reload()">Làm lại bài</button>
+</center>
+
+</div>
+
+<script>
+
+const questions = [
+
+/* =========================
+5 CÂU LÝ THUYẾT
+========================= */
+
+{
+type:"Lý thuyết",
+q:"1. Hàm số \\(f(x)\\) được gọi là hàm chẵn nếu:",
+options:[
+"\\(f(-x)=-f(x)\\)",
+"\\(f(-x)=f(x)\\)",
+"\\(f(x)=0\\)",
+"\\(f(x)>0\\)"
+],
+answer:1,
+explanation:"Theo định nghĩa: hàm chẵn thỏa \\(f(-x)=f(x)\\).",
+tip:"Hàm chẵn ⇒ đối xứng trục tung."
+},
+
+{
+type:"Lý thuyết",
+q:"2. Đồ thị hàm lẻ đối xứng qua:",
+options:[
+"Trục tung",
+"Trục hoành",
+"Gốc tọa độ",
+"Đường thẳng y=x"
+],
+answer:2,
+explanation:"Hàm lẻ đối xứng qua gốc tọa độ.",
+tip:"Xoay 180° quanh gốc O."
+},
+
+{
+type:"Lý thuyết",
+q:"3. Điều kiện tiên quyết để xét tính chẵn lẻ là:",
+options:[
+"Hàm liên tục",
+"Hàm khả vi",
+"Tập xác định đối xứng qua 0",
+"Hàm có giới hạn"
+],
+answer:2,
+explanation:"Nếu tập xác định không đối xứng thì không thể xét chẵn lẻ.",
+tip:"Luôn kiểm tra tập xác định trước."
+},
+
+{
+type:"Lý thuyết",
+q:"4. Hàm số nào sau đây là hàm chẵn?",
+options:[
+"\\(f(x)=x^3\\)",
+"\\(f(x)=x\\)",
+"\\(f(x)=x^2\\)",
+"\\(f(x)=\\sin x\\)"
+],
+answer:2,
+explanation:"\\((-x)^2=x^2\\).",
+tip:"Lũy thừa chẵn thường cho hàm chẵn."
+},
+
+{
+type:"Lý thuyết",
+q:"5. Hàm số nào sau đây là hàm lẻ?",
+options:[
+"\\(f(x)=x^2\\)",
+"\\(f(x)=|x|\\)",
+"\\(f(x)=\\cos x\\)",
+"\\(f(x)=x^3\\)"
+],
+answer:3,
+explanation:"\\((-x)^3=-x^3\\).",
+tip:"Lũy thừa bậc lẻ thường cho hàm lẻ."
+},
+
+/* =========================
+5 CÂU DỄ
+========================= */
+
+{
+type:"Dễ",
+q:"6. Xét hàm \\(f(x)=|x|\\). Kết luận đúng là:",
+options:[
+"Hàm lẻ",
+"Hàm chẵn",
+"Không chẵn không lẻ",
+"Vừa chẵn vừa lẻ"
+],
+answer:1,
+explanation:"\\(|-x|=|x|\\).",
+tip:"Giá trị tuyệt đối luôn không âm."
+},
+
+{
+type:"Dễ",
+q:"7. Xét hàm \\(f(x)=x^5\\). Đây là:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Hàm hằng"
+],
+answer:1,
+explanation:"\\((-x)^5=-x^5\\).",
+tip:"Bậc lẻ ⇒ thường lẻ."
+},
+
+{
+type:"Dễ",
+q:"8. Hàm số \\(f(x)=x^2+x\\) là:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Vừa chẵn vừa lẻ"
+],
+answer:2,
+explanation:"\\(f(-x)=x^2-x\\) không bằng \\(f(x)\\) cũng không bằng \\(-f(x)\\).",
+tip:"Có cả số mũ chẵn và lẻ ⇒ thường không chẵn không lẻ."
+},
+
+{
+type:"Dễ",
+q:"9. Hàm số \\(f(x)=\\cos x\\) là:",
+options:[
+"Hàm lẻ",
+"Hàm chẵn",
+"Không chẵn không lẻ",
+"Hàm tuần hoàn"
+],
+answer:1,
+explanation:"\\(\\cos(-x)=\\cos x\\).",
+tip:"Cos là chẵn, sin là lẻ."
+},
+
+{
+type:"Dễ",
+q:"10. Hàm số \\(f(x)=\\sin x\\) là:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Hàm hằng"
+],
+answer:1,
+explanation:"\\(\\sin(-x)=-\\sin x\\).",
+tip:"Sin luôn là hàm lẻ."
+},
+
+/* =========================
+5 CÂU TRUNG BÌNH
+========================= */
+
+{
+type:"Trung bình",
+q:"11. Xét hàm \\(f(x)=\\dfrac{1}{x}\\). Kết luận đúng:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Không xác định"
+],
+answer:1,
+explanation:"\\(f(-x)=\\frac{1}{-x}=-f(x)\\).",
+tip:"Phân thức dạng 1/x thường là hàm lẻ."
+},
+
+{
+type:"Trung bình",
+q:"12. Hàm \\(f(x)=x^4+x^2\\) là:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Vừa chẵn vừa lẻ"
+],
+answer:0,
+explanation:"Mọi số mũ đều chẵn nên hàm chẵn.",
+tip:"Tổng các hàm chẵn vẫn là hàm chẵn."
+},
+
+{
+type:"Trung bình",
+q:"13. Hàm \\(f(x)=x^3+x\\) là:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Hàm hằng"
+],
+answer:1,
+explanation:"Tổng hai hàm lẻ vẫn là hàm lẻ.",
+tip:"Lẻ + lẻ = lẻ."
+},
+
+{
+type:"Trung bình",
+q:"14. Nếu \\(f(x)\\) là hàm lẻ thì \\(\\int_{-a}^{a}f(x)dx\\) bằng:",
+options:[
+"\\(2\\int_0^a f(x)dx\\)",
+"0",
+"a",
+"-a"
+],
+answer:1,
+explanation:"Tính chất cơ bản của hàm lẻ trên đoạn đối xứng.",
+tip:"Diện tích hai bên triệt tiêu nhau."
+},
+
+{
+type:"Trung bình",
+q:"15. Nếu \\(f(x)\\) là hàm chẵn thì:",
+options:[
+"\\(f(-x)=-f(x)\\)",
+"\\(f(-x)=f(x)\\)",
+"\\(f(x)=0\\)",
+"\\(f(x)<0\\)"
+],
+answer:1,
+explanation:"Đúng theo định nghĩa.",
+tip:"Chẵn ⇒ soi gương qua trục tung."
+},
+
+/* =========================
+5 CÂU KHÓ
+========================= */
+
+{
+type:"Khó",
+q:"16. Xét hàm \\(f(x)=\\dfrac{x^2+1}{x}\\). Hàm số là:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Vừa chẵn vừa lẻ"
+],
+answer:1,
+explanation:"\\(f(-x)=\\dfrac{x^2+1}{-x}=-f(x)\\).",
+tip:"Tách thành \\(x+1/x\\)."
+},
+
+{
+type:"Khó",
+q:"17. Hàm nào vừa chẵn vừa lẻ?",
+options:[
+"\\(f(x)=1\\)",
+"\\(f(x)=x\\)",
+"\\(f(x)=0\\)",
+"\\(f(x)=x^2\\)"
+],
+answer:2,
+explanation:"Chỉ hàm 0 mới vừa chẵn vừa lẻ.",
+tip:"Muốn vừa chẵn vừa lẻ ⇒ \\(f(x)=0\\)."
+},
+
+{
+type:"Khó",
+q:"18. Hàm \\(f(x)=\\tan x\\) là:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Hàm tuần hoàn chẵn"
+],
+answer:1,
+explanation:"\\(\\tan(-x)=-\\tan x\\).",
+tip:"Tan giống sin ⇒ lẻ."
+},
+
+{
+type:"Khó",
+q:"19. Hàm \\(f(x)=\\sqrt{x^2+1}\\) là:",
+options:[
+"Hàm chẵn",
+"Hàm lẻ",
+"Không chẵn không lẻ",
+"Không xác định"
+],
+answer:0,
+explanation:"\\(f(-x)=\\sqrt{(-x)^2+1}=\\sqrt{x^2+1}\\).",
+tip:"Trong căn chỉ có số mũ chẵn."
+},
+
+{
+type:"Khó",
+q:"20. Đồ thị hàm chẵn đối xứng qua:",
+options:[
+"Gốc tọa độ",
+"Trục hoành",
+"Trục tung",
+"Đường y=x"
+],
+answer:2,
+explanation:"Đặc trưng hình học của hàm chẵn là đối xứng qua trục Oy.",
+tip:"Chẵn ⇒ gương trục tung."
+}
+
+];
+
+const quiz=document.getElementById("quiz");
+let score=0;
+
+questions.forEach((q,index)=>{
+
+    const div=document.createElement("div");
+    div.className="question";
+
+    div.innerHTML=`
+        <h3>Câu ${index+1} <span class="level">(${q.type})</span></h3>
+        <p>${q.q}</p>
+    `;
+
+    q.options.forEach((opt,i)=>{
+
+        const btn=document.createElement("div");
+        btn.className="option";
+        btn.innerHTML=opt;
+
+        btn.onclick=function(){
+
+            if(div.classList.contains("answered")) return;
+
+            div.classList.add("answered");
+
+            if(i===q.answer){
+                btn.classList.add("correct");
+                score++;
+                document.getElementById("score").innerText=score;
+            }else{
+                btn.classList.add("wrong");
+                div.querySelectorAll(".option")[q.answer].classList.add("correct");
+            }
+
+            explanation.style.display="block";
+
+            MathJax.typeset();
+        };
+
+        div.appendChild(btn);
+
+    });
+
+    const explanation=document.createElement("div");
+    explanation.className="explanation";
+
+    explanation.innerHTML=`
+        <b>Đáp án đúng:</b> ${q.options[q.answer]}<br><br>
+        <b>Giải thích:</b> ${q.explanation}
+        <div class="tip">
+        <b>Mẹo làm nhanh:</b> ${q.tip}
+        </div>
+    `;
+
+    div.appendChild(explanation);
+
+    quiz.appendChild(div);
+
+});
+
+MathJax.typeset();
+
+</script>
+
+</body>
+</html>
